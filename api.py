@@ -16,6 +16,10 @@ def fetch_executables_from_db():
     executables = cursor.fetchall()
     conn.close()
     return executables
+@app.route('/')
+def home():
+    return 'Hello, world!'  # Assurez-vous que cette route est bien définie
+
 
 @app.route('/executables', methods=['GET'])
 def get_executables():
