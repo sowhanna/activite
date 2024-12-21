@@ -13,20 +13,30 @@ def create_db():
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS executables (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        file_path TEXT NOT NULL
+        file_path TEXT NOT NULL UNIQUE
     )
     ''')
 
     # Ajouter un exemple d'exécutable
     executable_path = r'C:\Users\ANNA\Desktop\iso et logiciel\VC_redist.x64.exe'
-    cursor.execute('''
-    INSERT INTO executables (file_path) VALUES (?)
-    ''', (executable_path,))
+
+    # Vérifiez si le fichier existe déjà avant de l'insérer
+    cursor.execute("SELECT * FROM executables WHERE file_path = ?", (executable_path,))
+    exists = cursor.fetchone()
+
+    if not exists:
+        # Si le fichier n'existe pas, insérez-le
+        cursor.execute('''
+        INSERT INTO executables (file_path) VALUES (?)
+        ''', (executable_path,))
+        print("Chemin ajouté à la base de données.")
+    else:
+        print("Chemin déjà existant dans la base de données.")
 
     # Commit les changements et ferme la connexion
     conn.commit()
     conn.close()
-    print("Base de données créée et données ajoutées.")
+    print("Base de données créée et mise à jour terminée.")
 
 if __name__ == "__main__":
     create_db()
