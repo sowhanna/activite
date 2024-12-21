@@ -18,7 +18,6 @@ def create_db():
     ''')
 
     # Ajouter quelques fichiers exécutables pour l'exemple
-    # Remplacez ce chemin par le vôtre
     executable_path = r'C:\Users\ANNA\Desktop\iso et logiciel\VC_redist.x64.exe'
 
     # Assurez-vous que le chemin est correct avant d'ajouter dans la base de données

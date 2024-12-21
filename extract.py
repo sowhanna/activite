@@ -1,51 +1,43 @@
+from flask import Flask, jsonify
 import os
-import hashlib
-import magic
+import sqlite3
+from extract import extract_features  # Importation de la fonction d'extraction
 
-def extract_features(file_path):
-    """
-    Cette fonction extrait 7 caractéristiques d'un fichier exécutable.
-    """
-    # 1. Nom du fichier
-    file_name = os.path.basename(file_path)
+app = Flask(__name__)
 
-    # 2. Taille du fichier
-    file_size = os.path.getsize(file_path)
+# Connexion à la base de données SQLite
+def connect_db():
+    # Connexion à la base de données SQLite, située dans le même dossier
+    conn = sqlite3.connect('database.db')  # Nom de la base de données
+    return conn
 
-    # 3. Date de création
-    creation_time = os.path.getctime(file_path)
+# Récupère les fichiers exécutables de la base de données
+def fetch_executables_from_db():
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, file_path FROM executables")  # La table 'executables'
+    executables = cursor.fetchall()
+    conn.close()
+    return executables
 
-    # 4. Date de dernière modification
-    modification_time = os.path.getmtime(file_path)
+# Route principale de l'API qui renvoie un message de bienvenue
+@app.route('/')
+def home():
+    return 'Bonjour le monde!'
 
-    # 5. Accessibilité en tant qu'exécutable
-    is_executable = os.access(file_path, os.X_OK)
+# Route pour récupérer les caractéristiques des exécutables
+@app.route('/executables', methods=['GET'])
+def get_executables():
+    executables = fetch_executables_from_db()
+    results = []
+    
+    for executable in executables:
+        file_path = executable[1]  # Le chemin du fichier est à l'index 1
+        if os.path.isfile(file_path):  # Vérifie si c'est un fichier existant
+            features = extract_features(file_path)  # Appel à la fonction d'extraction
+            results.append(features)
+    
+    return jsonify(results)
 
-    # 6. Type MIME (assurez-vous d'installer python-magic)
-    mime_type = magic.from_file(file_path, mime=True)
-
-    # 7. Hash MD5
-    md5_hash = get_md5(file_path)
-
-    # Retourner les caractéristiques sous forme de dictionnaire
-    features = {
-        "file_name": file_name,
-        "file_size": file_size,
-        "creation_time": creation_time,
-        "modification_time": modification_time,
-        "is_executable": is_executable,
-        "mime_type": mime_type,
-        "md5_hash": md5_hash
-    }
-    return features
-
-# Fonction pour obtenir le hash MD5 d'un fichier
-def get_md5(file_path):
-    """
-    Cette fonction génère le hash MD5 d'un fichier.
-    """
-    hash_md5 = hashlib.md5()
-    with open(file_path, "rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""):
-            hash_md5.update(chunk)
-    return hash_md5.hexdigest()
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
