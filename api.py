@@ -5,9 +5,17 @@ import os
 app = Flask(__name__)
 
 # Fonction pour connecter à la base de données
+#def connect_db():
+    #db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database.db')
+   # print(f"Chemin de la base de données : {db_path}")  # Pour vérifier le chemin
+   # return sqlite3.connect(db_path)
+
 def connect_db():
     db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database.db')
-    print(f"Chemin de la base de données : {db_path}")  # Pour vérifier le chemin
+    if not os.path.exists(db_path):
+        print(f"Erreur : La base de données est introuvable au chemin : {db_path}")
+    else:
+        print(f"Connexion à la base de données : {db_path}")
     return sqlite3.connect(db_path)
 
 # Fonction pour récupérer les exécutables depuis la base de données
