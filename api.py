@@ -5,22 +5,15 @@ from extract import extract_features  # Importation de la fonction d'extraction
 import magic
 
 app = Flask(__name__)
-#print("python-magic version:", magic.__version__)
+
 # Connexion à la base de données SQLite
 def connect_db():
-    """
-    Connexion à la base de données SQLite.
-    Changez cette fonction si vous utilisez un autre SGBD (par exemple MySQL, PostgreSQL).
-    """
-    conn = sqlite3.connect('path_to_your_database.db')  # Remplacez par le chemin vers votre BD
+    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database.db')  # Chemin vers la base de données
+    conn = sqlite3.connect(db_path)
     return conn
 
 # Récupère les fichiers exécutables de la base de données
 def fetch_executables_from_db():
-    """
-    Cette fonction récupère tous les exécutables de la base de données.
-    Vous pouvez adapter la requête pour d'autres SGBD comme MySQL ou PostgreSQL.
-    """
     conn = connect_db()
     cursor = conn.cursor()
     cursor.execute("SELECT id, file_path FROM executables")  # Adaptez la requête selon votre BD
@@ -49,5 +42,4 @@ def get_executables():
     return jsonify(results)
 
 if __name__ == "__main__":
-    # Vous pouvez aussi spécifier le port si nécessaire.
     app.run(host="0.0.0.0", port=5000)
