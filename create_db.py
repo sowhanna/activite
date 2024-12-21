@@ -5,7 +5,7 @@ def create_db():
     # Définir le chemin de la base de données
     db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database.db')
 
-    # Connexion à la base de données SQLite (cela la crée si elle n'existe pas)
+    # Connexion à la base de données SQLite
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
@@ -17,15 +17,15 @@ def create_db():
     )
     ''')
 
-    # Ajouter un exemple d'exécutable
-    executable_path = r'C:\Users\ANNA\Desktop\iso et logiciel\VC_redist.x64.exe'
+    # Exemple d'exécutable à ajouter
+    executable_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'executables', 'VC_redist.x64.exe')
 
-    # Vérifiez si le fichier existe déjà avant de l'insérer
+    # Vérification de l'existence de l'exécutable avant insertion
     cursor.execute("SELECT * FROM executables WHERE file_path = ?", (executable_path,))
     exists = cursor.fetchone()
 
     if not exists:
-        # Si le fichier n'existe pas, insérez-le
+        # Insérer un nouvel exécutable
         cursor.execute('''
         INSERT INTO executables (file_path) VALUES (?)
         ''', (executable_path,))
@@ -33,10 +33,10 @@ def create_db():
     else:
         print("Chemin déjà existant dans la base de données.")
 
-    # Commit les changements et ferme la connexion
+    # Commit des changements et fermer la connexion
     conn.commit()
     conn.close()
-    print("Base de données créée et mise à jour terminée.")
+    print("Base de données mise à jour.")
 
 if __name__ == "__main__":
     create_db()
