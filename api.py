@@ -1,26 +1,48 @@
-from flask import Flask, request, jsonify
-from extract import extract_features
+from flask import Flask, jsonify
 import os
-
+import sqlite3
+from extract import extract_features  # Importation de la fonction d'extraction
 
 app = Flask(__name__)
 
-@app.route('/')
-def index():
-    return 'Hello, world!'
+# Connexion à la base de données SQLite
+def connect_db():
+    """
+    Connexion à la base de données SQLite.
+    Changez cette fonction si vous utilisez un autre SGBD (par exemple MySQL, PostgreSQL).
+    """
+    conn = sqlite3.connect('path_to_your_database.db')  # Remplacez par le chemin vers votre BD
+    return conn
 
-@app.route('/extract', methods=['POST'])
-def extract():
-    file = request.files['file']
-    features = extract_features(file)
-    return jsonify(features)
+# Récupère les fichiers exécutables de la base de données
+def fetch_executables_from_db():
+    """
+    Cette fonction récupère tous les exécutables de la base de données.
+    Vous pouvez adapter la requête pour d'autres SGBD comme MySQL ou PostgreSQL.
+    """
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, file_path FROM executables")  # Adaptez la requête selon votre BD
+    executables = cursor.fetchall()  # Récupère tous les exécutables
+    conn.close()
+    return executables
 
-#if __name__ == "__main__":
-   # app.run(debug=True)
-#if __name__ == "__main__":
-   # app.run(host="0.0.0.0", port=5000)
-    #import os
+# Route principale de l'API qui renvoie les caractéristiques de tous les exécutables
+@app.route('/executables', methods=['GET'])
+def get_executables():
+    """
+    Parcourt la base de données et retourne les caractéristiques des exécutables.
+    """
+    executables = fetch_executables_from_db()
+    results = []
+    for executable in executables:
+        file_path = executable[1]  # Le chemin du fichier est à l'index 1
+        if os.path.isfile(file_path):  # Vérifie si c'est un fichier existant
+            features = extract_features(file_path)  # Appel à la fonction d'extraction
+            results.append(features)
+    
+    return jsonify(results)
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Utilise le port fourni par Render ou 5000 par défaut
-    app.run(host="0.0.0.0", port=port)
+    # Vous pouvez aussi spécifier le port si nécessaire.
+    app.run(host="0.0.0.0", port=5000)
