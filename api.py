@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 from extract import extract_features
+import os
+
 
 app = Flask(__name__)
 
