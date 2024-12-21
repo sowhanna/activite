@@ -5,7 +5,7 @@ from extract import extract_features  # Importation de la fonction d'extraction
 import magic
 
 app = Flask(__name__)
-print("python-magic version:", magic.__version__)
+#print("python-magic version:", magic.__version__)
 # Connexion à la base de données SQLite
 def connect_db():
     """
