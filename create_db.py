@@ -17,10 +17,8 @@ def create_db():
     )
     ''')
 
-    # Ajouter quelques fichiers exécutables pour l'exemple
+    # Ajouter un exemple d'exécutable
     executable_path = r'C:\Users\ANNA\Desktop\iso et logiciel\VC_redist.x64.exe'
-
-    # Assurez-vous que le chemin est correct avant d'ajouter dans la base de données
     cursor.execute('''
     INSERT INTO executables (file_path) VALUES (?)
     ''', (executable_path,))
@@ -28,7 +26,7 @@ def create_db():
     # Commit les changements et ferme la connexion
     conn.commit()
     conn.close()
+    print("Base de données créée et données ajoutées.")
 
 if __name__ == "__main__":
     create_db()
-    print("Base de données créée et exécutables ajoutés.")
