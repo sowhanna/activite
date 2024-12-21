@@ -18,7 +18,8 @@ def create_db():
     ''')
 
     # Ajouter un exemple d'exécutable (vous pouvez ajuster ce chemin en fonction de votre répertoire)
-    executable_path = r'executables/VC_redist.x64.exe'  # Utilisez un chemin relatif ici
+   # executable_path = r'executables/VC_redist.x64.exe'  # Utilisez un chemin relatif ici
+    executable_path = 'executables/VC_redist.x64.exe'  # Chemin relatif
 
     # Vérifiez si le fichier existe déjà avant de l'insérer
     cursor.execute("SELECT * FROM executables WHERE file_path = ?", (executable_path,))
