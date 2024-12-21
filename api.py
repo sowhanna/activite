@@ -29,6 +29,10 @@ def fetch_executables_from_db():
     return executables
 
 # Route principale de l'API qui renvoie les caractéristiques de tous les exécutables
+@app.route('/')
+def home():
+    return 'Hello, world!'
+
 @app.route('/executables', methods=['GET'])
 def get_executables():
     """
