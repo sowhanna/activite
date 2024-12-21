@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 import os
 import sqlite3
-from extractor import extract_features  # Importation depuis extractor.py
+from extract import extract_features  # Importation depuis extractor.py
 
 app = Flask(__name__)
 
