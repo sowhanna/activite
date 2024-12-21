@@ -30,8 +30,17 @@ def get_executables_features():
     executables = fetch_executables_from_db()
     all_features = []
     
+    # Affichez le répertoire actuel pour le débogage
+    print(f"Répertoire actuel : {os.getcwd()}")
+
     for exe in executables:
-        executable_path = exe[1]  # Le chemin de l'exécutable depuis la base de données
+        # Construisez le chemin relatif pour l'exécutable
+        executable_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'executables', exe[1])
+
+        # Log de débogage pour afficher le chemin de chaque exécutable
+        print(f"Vérification du fichier : {executable_path}")
+
+        # Vérifiez si le fichier existe
         if os.path.exists(executable_path):
             features = extract_features(executable_path)  # Extraction des caractéristiques
             all_features.append({
@@ -47,6 +56,7 @@ def get_executables_features():
             })
     
     return jsonify(all_features), 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
