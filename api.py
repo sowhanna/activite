@@ -25,37 +25,11 @@ def home():
     return "API en fonctionnement !"
 
 # Route pour obtenir les 7 caractéristiques de chaque exécutable
-@app.route('/executables/features', methods=['GET'])
-def get_executables_features():
+@app.route('/executables', methods=['GET'])
+def get_executables():
     executables = fetch_executables_from_db()
-    all_features = []
-    
-    # Affichez le répertoire actuel pour le débogage
-    print(f"Répertoire actuel : {os.getcwd()}")
-
-    for exe in executables:
-        # Construisez le chemin relatif pour l'exécutable
-        executable_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'executables', exe[1])
-
-        # Log de débogage pour afficher le chemin de chaque exécutable
-        print(f"Vérification du fichier : {executable_path}")
-
-        # Vérifiez si le fichier existe
-        if os.path.exists(executable_path):
-            features = extract_features(executable_path)  # Extraction des caractéristiques
-            all_features.append({
-                "id": exe[0],  # ID de l'exécutable
-                "file_path": executable_path,
-                "features": features
-            })
-        else:
-            all_features.append({
-                "id": exe[0],
-                "file_path": executable_path,
-                "features": {"error": "Executable non trouvé"}
-            })
-    
-    return jsonify(all_features), 200
+    results = [{"id": exe[0], "file_path": exe[1]} for exe in executables]
+    return jsonify(results)
 
 
 if __name__ == '__main__':
