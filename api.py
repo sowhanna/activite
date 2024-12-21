@@ -3,6 +3,10 @@ from extract import extract_features
 
 app = Flask(__name__)
 
+@app.route('/')
+def index():
+    return 'Hello, world!'
+
 @app.route('/extract', methods=['POST'])
 def extract():
     file = request.files['file']
